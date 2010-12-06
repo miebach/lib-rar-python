@@ -3,25 +3,23 @@ on linux
 
 
 
-Version 0.3: 
+Version 0.4: 
 
-Can archive multiple files, but extracting will extract to the current directory
-and not respect path info from archive
-
+Now using rar instead of 7zip, rar has good documentation, but is not open source.
 
 
 Install this module like this:
 
-    sudo pip install Lib7zipPython-0.0.x.tar.gz 
+    sudo pip install LibRarPython-0.0.x.tar.gz 
 
 (replace x with your version)
 
 
-You also need 7zip
+You also need rar
 
 On ubuntu:
 
-    sudo aptitude install p7zip
+    sudo aptitude install rar ubrar
 
 
 Usage example
@@ -29,7 +27,7 @@ Usage example
 #!/usr/bin/python
 import archive
 
-a = archive.Archive("/home/me/testarchive1.7zip")
+a = archive.Archive("/home/me/testarchive1.rar")
 a.add_file("/home/me/testfile")
 a.run() 
   

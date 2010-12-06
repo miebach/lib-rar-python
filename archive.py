@@ -23,11 +23,14 @@ def shellcall(cmd,silent=False):
 
 class Archive(object):
 
-  def __init__(self,archive_fullpath,sevenbin = "/usr/bin/7za"):
+  def __init__(self,archive_fullpath,base_path,rarbin = "/usr/bin/rar"):
     self.archive_fullpath = archive_fullpath
+    self.base_path = base_path
+    self.rarbin = rarbin
+
     self.include_files = []
     self.include_dirs = []
-    self.sevenbin = sevenbin
+    
     
   def add_file(self,fullpath):
     self.include_files.append(fullpath)
@@ -38,29 +41,33 @@ class Archive(object):
   def extract(self,target_path,silent=True):
     import os
     os.chdir(target_path)
-    cmd = self.sevenbin + " e " + self.archive_fullpath
+    # e = extract to current dir, x = extract using full path
+    # -r = recurse subdirectories
+    # (-r could be introduced, because single added files otherwise are extrated 
+    #  to the wrong place. But this should bex fixed on archiving, nit unarchiving!)
+    cmd = self.rarbin + " x " + self.archive_fullpath
     return shellcall(cmd,silent=silent)
     
   def run(self,silent=True):
-    cmd = self.sevenbin + " a " + self.archive_fullpath 
-    for p in self.include_files: 
-      cmd = cmd +  " " + p
-    for p in self.include_dirs: 
-      cmd = cmd +  " " + p
-    return shellcall(cmd,silent=silent)
-    
-    
-"""
+    # -ep1 remove base directory from paths (store only relative directory)
 
-z7ip commands
+    import os
+    os.chdir(self.base_path)
 
-Command 	Description
-a 	Add - create a new archive, or add files to an existing archive
-d 	Delete - remove files from an existing archive
-e 	Extract - unarchive files
-l 	List - display the contents of an archive
-t 	Test - validate the integrity of an archive
-u 	Update - overwrite existing files in an existing archive
-x 	Extract - same as "e", except that the files are restored to their exact original 
-    locations (if possible)
-"""
+    res = 0
+
+    if len(self.include_dirs) > 0:   
+      cmd = self.rarbin + " a " + self.archive_fullpath 
+      for p in self.include_dirs: 
+        cmd = cmd +  " " + p
+      res = shellcall(cmd,silent=silent)
+      if res != 0:
+        return res
+
+    if len(self.include_files) > 0:
+      cmd = self.rarbin + " a " + self.archive_fullpath 
+      for p in self.include_files: 
+        cmd = cmd +  " " + p
+      res = shellcall(cmd,silent=silent)
+    
+    return res
