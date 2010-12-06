@@ -1,9 +1,10 @@
-from distutils.core import setup
+#from distutils.core import setup, find_packages
+from setuptools import setup, find_packages
 
 setup(
-  name = "lib7zip",
-  version = "0.0.3",
-  py_modules = ["archive", "file_helper"],
+  name = "librar",
+  version = "0.0.4",
+  packages=find_packages(),
   author = "Kurt Miebach",
   author_email = "kwmiebach@gmail.com",
 ) 
