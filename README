@@ -2,6 +2,14 @@ This package helps using the command line version of rar and unrar
 on linux
 
 
+
+Version 0.3: 
+
+Can archive multiple files, but extracting will extract to the current directory
+and not respect path info from archive
+
+
+
 Install this module like this:
 
     sudo pip install Lib7zipPython-0.0.x.tar.gz 
