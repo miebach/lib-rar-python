@@ -1,15 +1,12 @@
 This package asissts using the command line version of rar on linux
 
-Install this module like this:
+Install this module:
 
     sudo pip install librar-0.0.x.tar.gz 
 
 (replace x with your version)
 
-
-You also need rar
-
-On ubuntu:
+You also need rar, on ubuntu:
 
     sudo aptitude install rar
 
@@ -18,7 +15,8 @@ Usage example
   #!/usr/bin/python
   from librar import archive
   
-  a = archive.Archive("/home/me/testarchive1.rar") # this will be created
+  base="/home/me" # all files in archive will be relative to this path
+  a = archive.Archive("/tmp/testarchive1.rar",base) # archive will be created in /tmp
   a.add_file("/home/me/testfile") # testfile will be added to archive
   
   # create archive:
