@@ -30,7 +30,10 @@ class Archive(object):
 
     self.include_files = []
     self.include_dirs = []
-    
+    self.exclude_patterns = []
+  
+  def exclude(self,pattern):
+    self.exclude_patterns.append(pattern)
     
   def add_file(self,fullpath):
     self.include_files.append(fullpath)
@@ -54,20 +57,23 @@ class Archive(object):
     import os
     os.chdir(self.base_path)
 
-    res = 0
-
-    if len(self.include_dirs) > 0:   
-      cmd = self.rarbin + " a " + self.archive_fullpath 
-      for p in self.include_dirs: 
-        cmd = cmd +  " " + p
-      res = shellcall(cmd,silent=silent)
-      if res != 0:
-        return res
-
-    if len(self.include_files) > 0:
-      cmd = self.rarbin + " a " + self.archive_fullpath 
-      for p in self.include_files: 
-        cmd = cmd +  " " + p
-      res = shellcall(cmd,silent=silent)
+    # rar add 
+    cmd = self.rarbin + " a" 
     
+    # exclude certain locations
+    for p in self.exclude_patterns: 
+      cmd = cmd +  " -x" + p
+
+    # the archive path and name
+    cmd = cmd + " " + self.archive_fullpath 
+
+    # directories to include
+    for p in self.include_dirs: 
+      cmd = cmd +  " " + p
+
+    # files to include
+    for p in self.include_files: 
+      cmd = cmd +  " " + p
+
+    res = shellcall(cmd,silent=silent)
     return res

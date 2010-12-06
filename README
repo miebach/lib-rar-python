@@ -27,4 +27,9 @@ You can also add directories:
 
   a.add_dir("/home/me/dir1") # directory and everythin below it will be added to archive
   
-You can use add_dir and add_file multiple times and also combine them.  
+You can use add_dir and add_file multiple times and also combine them.
+
+To exclude directories or files:
+  
+  a.exclude("/home/me/dir1/tmp") # directory and everythin below it (?) will be excluded
+  

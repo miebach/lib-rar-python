@@ -335,6 +335,51 @@ class TestArchive(unittest.TestCase):
     self.assertEqual(file_helper.file_head(fabs2),"content-2")
     self.assertEqual(file_helper.file_head(fabs3),"content-3")
 
+  def testExclude(self):
+    # test archiving a subdir with a file and extracting relative
+    
+    base=self.tempdir
+    rar=opj(base,"testarchive1.rar")
+    a = archive.Archive(rar,base)
+
+    drel_top = "A"
+    drel=opj(drel_top,"1","a")
+    dabs=opj(base,drel)
+    file_helper.mkdir_p(dabs)
+
+    frel=opj(drel,"testfile-1")
+    fabs=opj(base,frel)
+    file_helper.create_file(fabs,"content-2")
+
+    frel2=opj(drel,"testfile-2")
+    fabs2=opj(base,frel2)
+    file_helper.create_file(fabs2,"content-2")
+
+    a.add_dir(drel_top)
+    a.exclude(frel) # exclude the first file!
+
+    self.assertEqual(a.run(),0) 
+    self.assertEqual(file_helper.file_exists(rar),True)
+
+    file_helper.remove_file(fabs)
+    self.assertEqual(file_helper.file_exists(fabs),False)
+
+    file_helper.remove_file(fabs2)
+    self.assertEqual(file_helper.file_exists(fabs2),False)
+                                                                        
+    # test content of archive by extracting:                                                     
+    b = archive.Archive(rar,base)    
+    syscode = b.extract(target_path=self.tempdir)
+    self.assertEqual(syscode,0)
+
+    # the first file was excluded, may not exist:
+    self.assertEqual(file_helper.file_exists(fabs),False)
+    # the second file must be there:
+    self.assertEqual(file_helper.file_head(fabs2),"content-2")
+    
+
+
+
 
 
 if __name__ == "__main__":
