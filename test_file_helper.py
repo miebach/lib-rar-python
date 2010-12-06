@@ -57,15 +57,18 @@ class TestFileHelper(unittest.TestCase):
 
 
   def testFileHelperDirError(self):
-    # create dir:
-    #file_helper.create_dir(opj(self.tempdir,"notexisting","testdir"))
-    pass
-    
-    # FIXME
-    
-    ## test if it exists:
-    #self.assertEqual(file_helper.dir_exists(opj(self.tempdir,"testfile")),True)
-    
+    # create dir at not existing location:
+    try:
+      exception = False
+      file_helper.create_dir(opj(self.tempdir,"notexisting","testdir"))
+    except:
+      exception = True
+
+    # should have raised exception (OSError)
+    self.assertEqual(exception,True)
+
+    # should not exists:
+    self.assertEqual(file_helper.dir_exists(opj(self.tempdir,"testfile")),False)
     
   def setUp(self):
     #get a temp dir:
