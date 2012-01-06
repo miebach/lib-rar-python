@@ -70,7 +70,7 @@ class Archive(object):
     cmd = self.rarbin + " x " + self.archive_fullpath
     return shellcall(cmd,silent=silent)
     
-  def run(self,silent=True, pwd=None, level=3):
+  def run(self,silent=True):
     # -ep1 remove base directory from paths (store only relative directory)
 
     import os
