@@ -1,3 +1,6 @@
+This is a fork of lib-rar-python written by miebach, with the ability to set password
+and change compression level when archiving
+
 This package asissts using the command line version of rar on linux
 
 Install this module:
@@ -18,6 +21,8 @@ Usage example
   base="/home/me" # all files in archive will be relative to this path
   a = archive.Archive("/tmp/testarchive1.rar",base) # archive will be created in /tmp
   a.add_file("/home/me/testfile") # testfile will be added to archive
+  a.set_password("awesomesauce") # set password to the archive
+  a.set_compression_level(0) # change compression level to Store
   
   # create archive:
   a.run() 

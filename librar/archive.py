@@ -27,6 +27,9 @@ class Archive(object):
     self.archive_fullpath = archive_fullpath
     self.base_path = base_path
     self.rarbin = rarbin
+    self.pwd = None
+    # compression level: 0: store, 1: fastest, 2: fast, 3: normal, 4: good, 5: best
+    self.compression_level = 3
 
     self.include_files = []
     self.include_dirs = []
@@ -41,6 +44,12 @@ class Archive(object):
   def add_dir(self,fullpath):
     self.include_dirs.append(fullpath)
     
+  def set_password(self, pwd):
+	self.pwd = pwd
+	
+  def set_compression_level(self, compression_level):
+	self.compression_level = compression_level
+	
   def extract(self,target_path,silent=True):
     import os
     os.chdir(target_path)
@@ -51,7 +60,7 @@ class Archive(object):
     cmd = self.rarbin + " x " + self.archive_fullpath
     return shellcall(cmd,silent=silent)
     
-  def run(self,silent=True):
+  def run(self,silent=True, pwd=None, level=3):
     # -ep1 remove base directory from paths (store only relative directory)
 
     import os
@@ -74,6 +83,13 @@ class Archive(object):
     # files to include
     for p in self.include_files: 
       cmd = cmd +  " " + p
+	  
+    # include password if necessary
+    if self.pwd:
+      cmd = cmd + " -p" + str(self.pwd)
+	  
+    # compression level
+    cmd = cmd + " -m" + str(self.compression_level)
 
     res = shellcall(cmd,silent=silent)
     return res
