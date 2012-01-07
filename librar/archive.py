@@ -27,6 +27,13 @@ class Archive(object):
     self.archive_fullpath = archive_fullpath
     self.base_path = base_path
     self.rarbin = rarbin
+    self.pwd = None
+    # compression level: 0: store, 1: fastest, 2: fast, 3: normal, 4: good, 5: best
+    self.compression_level = 3
+    # Percentage of recovery record
+    self.recovery_record = None
+    # Volume size if necessary <size>[k|b|f|m|M|g|G] More info in rar.txt
+    self.volume_size = None
 
     self.include_files = []
     self.include_dirs = []
@@ -41,6 +48,18 @@ class Archive(object):
   def add_dir(self,fullpath):
     self.include_dirs.append(fullpath)
     
+  def set_password(self, pwd):
+	self.pwd = pwd
+	
+  def set_compression_level(self, compression_level):
+	self.compression_level = compression_level
+	
+  def set_recovery_record(self, rr_percent):
+    self.recovery_record = rr_percent
+  
+  def set_volume_size(self, volume_size):
+    self.volume_size = volume_size
+	
   def extract(self,target_path,silent=True):
     import os
     os.chdir(target_path)
@@ -74,6 +93,21 @@ class Archive(object):
     # files to include
     for p in self.include_files: 
       cmd = cmd +  " " + p
+	  
+    # include password if necessary
+    if self.pwd:
+      cmd = cmd + " -p" + str(self.pwd)
+	  
+    # compression level
+    cmd = cmd + " -m" + str(self.compression_level)
+	
+    # split to volumes based on volume size
+    if self.volume_size:
+      cmd = cmd + " -v" + str(self.volume_size)
+	  
+    # add recovery record if necessary
+    if self.recovery_record:
+      cmd = cmd + " -rr" + str(self.recovery_record)
 
     res = shellcall(cmd,silent=silent)
     return res
