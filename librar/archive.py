@@ -37,7 +37,18 @@ def findfile(choice):
         if os.path.isfile(f):
           return f
       raise Exception("Files not found: %s" % (choice,))
- 
+
+
+def mkdir_p(path):
+    # 'mkdir -p' in python.
+    # create a directory and all parent directories silently.
+    # from http://stackoverflow.com/a/600612/362951
+    try:
+        os.makedirs(path)
+    except OSError as exc: # Python >2.5
+        if exc.errno == errno.EEXIST:
+            pass
+        else: raise
 
 
 class Archive(object):
