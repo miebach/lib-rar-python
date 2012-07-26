@@ -58,7 +58,7 @@ class Logger(object):
     self.tag = tag
 
   def log(self,message):
-    command = "logger -t %s %s" % (self.tag,message)
+    command = "logger -t %s -- %s" % (self.tag,message)
     shellcall(command)
     print command
 
@@ -171,6 +171,7 @@ class Archive(object):
     res = shellcall("%s%s" % (cmd,pwd),silent=silent)
 
     if self.sys_logger is not None:
+      # hide the password with asterisks in syslog:
       self.sys_logger.log("%s%s; result: %s" % (cmd,logpwd,res))
 
     return res
