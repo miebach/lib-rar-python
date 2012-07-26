@@ -34,6 +34,7 @@ class Archive(object):
     self.recovery_record = None
     # Volume size if necessary <size>[k|b|f|m|M|g|G] More info in rar.txt
     self.volume_size = None
+    self.exclude_base_dir = False
 
     self.include_files = []
     self.include_dirs = []
@@ -53,7 +54,10 @@ class Archive(object):
 	
   def set_compression_level(self, compression_level):
 	self.compression_level = compression_level
-	
+
+  def set_exclude_base_dir(self, exclude_base_dir):
+    self.exclude_base_dir = exclude_base_dir
+  
   def set_recovery_record(self, rr_percent):
     self.recovery_record = rr_percent
   
@@ -108,6 +112,9 @@ class Archive(object):
     # add recovery record if necessary
     if self.recovery_record:
       cmd = cmd + " -rr" + str(self.recovery_record)
+
+    if self.exclude_base_dir:
+      cmd = cmd + " -ep1"
 
     res = shellcall(cmd,silent=silent)
     return res
