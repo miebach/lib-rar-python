@@ -23,9 +23,9 @@ def shellcall(cmd,silent=False):
 
 
 def findfile(choice):
-    # Check if one the filenames in choice exists, return that filename.
-    # choice can either be of type String, containing a single filename
-    # or also a list of strigs.
+    # Check if one of the filenames in the tuple 'choice' exists and return that filename.
+    # 'choice' can either be of type String, containing a single filename
+    # or also a tuple of strigs.
     # On some systems the rar bin file is in a different location.
     if type(choice) is types.StringType:
       if os.path.isfile(choice):
