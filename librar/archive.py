@@ -1,5 +1,6 @@
 import os
 import subprocess
+import types
 
 
 def shellcall(cmd,silent=False):
@@ -21,12 +22,30 @@ def shellcall(cmd,silent=False):
     return result
 
 
+def findfile(choice):
+    # Check if one the filenames in choice exists, return that filename.
+    # choice can either be of type String, containing a single filename
+    # or also a list of strigs.
+    # On some systems the rar bin file is in a different location.
+    if type(choice) is types.StringType:
+      if os.path.isfile(choice):
+        return choice
+      else:
+        raise Exception("File not found: %s" % choice)
+    if type(choice) is types.TupleType:
+      for f in choice:
+        if os.path.isfile(f):
+          return f
+      raise Exception("Files not found: %s" % (choice,))
+ 
+
+
 class Archive(object):
 
-  def __init__(self,archive_fullpath,base_path,rarbin = "/usr/bin/rar"):
+  def __init__(self,archive_fullpath,base_path,rarbin = ("/usr/bin/rar","/usr/local/bin/rar")):
     self.archive_fullpath = archive_fullpath
     self.base_path = base_path
-    self.rarbin = rarbin
+    self.rarbin = findfile(rarbin)
     self.pwd = None
     # compression level: 0: store, 1: fastest, 2: fast, 3: normal, 4: good, 5: best
     self.compression_level = 3
