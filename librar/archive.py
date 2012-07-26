@@ -1,6 +1,7 @@
 import os
 import subprocess
 import types
+import errno
 
 
 def shellcall(cmd,silent=False):
@@ -39,6 +40,17 @@ def findfile(choice):
       raise Exception("Files not found: %s" % (choice,))
  
 
+class Logger(object):
+  """logs to syslog using the unix logger function"""
+
+  def __init__(self,tag):
+    self.tag = tag
+
+  def log(self,message):
+    command = "logger -t %s %s" % (self.tag,message)
+    shellcall(command)
+    print command
+
 
 class Archive(object):
 
@@ -58,10 +70,15 @@ class Archive(object):
     self.include_files = []
     self.include_dirs = []
     self.exclude_patterns = []
+    self.sys_logger = None
+
+  def use_syslog(self,tag="LIB-RAR"):
+    self.sys_logger=Logger(tag)
+    
   
   def exclude(self,pattern):
     self.exclude_patterns.append(pattern)
-    
+  
   def add_file(self,fullpath):
     self.include_files.append(fullpath)
     
@@ -119,7 +136,12 @@ class Archive(object):
 	  
     # include password if necessary
     if self.pwd:
-      cmd = cmd + " -p" + str(self.pwd)
+      pwd = " -p" + str(self.pwd)
+      # do not show password in syslog:
+      logpwd = " -p*****"
+    else:
+      pwd = ""
+      logpwd = ""
 	  
     # compression level
     cmd = cmd + " -m" + str(self.compression_level)
@@ -135,5 +157,9 @@ class Archive(object):
     if self.exclude_base_dir:
       cmd = cmd + " -ep1"
 
-    res = shellcall(cmd,silent=silent)
+    res = shellcall("%s%s" % (cmd,pwd),silent=silent)
+
+    if self.sys_logger is not None:
+      self.sys_logger.log("%s%s; result: %s" % (cmd,logpwd,res))
+
     return res
